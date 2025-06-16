@@ -3,57 +3,27 @@ package model;
 import java.util.ArrayList;
 
 public class Epic extends Task {
-    private ArrayList<Subtask> subtasks = new ArrayList();
+    private ArrayList<Integer> subtasks = new ArrayList();
 
     public Epic(String title, String description) {
         super(title, description, Status.NEW);
-        this.updateStatus();
     }
 
-    public void addSubtask(Subtask subtask) {
-        this.subtasks.add(subtask);
-        this.updateStatus();
+    public void addSubtask(Integer id) {
+        this.subtasks.add(id);
     }
 
-    public ArrayList<Subtask> getSubtasks() {
+    public ArrayList<Integer> getSubtasks() {
         return this.subtasks;
     }
 
-    public void setSubtasks(ArrayList<Subtask> subtasks) {
+    public void setSubtasks(ArrayList<Integer> subtasks) {
         this.subtasks = subtasks;
-        this.updateStatus();
     }
 
     public void removeSubtaskById(int id) {
-        for(int i = 0; i < this.subtasks.size(); ++i) {
-            if ((this.subtasks.get(i)).getId() == id) {
-                this.subtasks.remove(i);
-                break;
-            }
-        }
-
-        this.updateStatus();
+        subtasks.remove(id);
     }
 
-    public void updateStatus() {
-        if (this.subtasks.isEmpty()) {
-            this.setStatus(Status.NEW);
-        } else {
-            boolean allDone = true;
 
-            for(Subtask s : this.subtasks) {
-                if (s.getStatus() != Status.DONE) {
-                    allDone = false;
-                    break;
-                }
-            }
-
-            if (allDone) {
-                this.setStatus(Status.DONE);
-            } else {
-                this.setStatus(Status.IN_PROGRESS);
-            }
-
-        }
-    }
 }
