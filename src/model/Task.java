@@ -4,8 +4,8 @@ import java.util.Objects;
 
 public class Task {
     private int id;
-    private final String title;
-    private final String description;
+    private String title;
+    private String description;
     private Status status;
 
     public Task(String title, String description, Status status) {
@@ -28,6 +28,22 @@ public class Task {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public boolean equals(Object o) {

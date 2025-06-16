@@ -95,6 +95,25 @@ public class Manager {
         return false;
     }
 
+    public void deleteAllTasks() {
+        tasks.clear();
+    }
+
+    public void deleteAllSubtasks() {
+        subtasks.clear();
+
+        for (Epic epic : epics.values()) {
+            epic.getSubtasks().clear();
+            epic.setStatus(Status.NEW);
+        }
+    }
+
+    public void deleteAllEpics() {
+        epics.clear();
+        subtasks.clear();
+    }
+
+
     public boolean updateTask(Task newTask) {
         int id = newTask.getId();
         if (tasks.containsKey(id)) {
@@ -106,14 +125,15 @@ public class Manager {
 
     public boolean updateEpic(Epic newEpic) {
         int id = newEpic.getId();
-        if (epics.containsKey(id)) {
-            newEpic.setSubtasks(getSubtasksOfEpic(id));
-            updateStatus(id);
-            epics.put(id, newEpic);
+        Epic existingEpic = epics.get(id);
+        if (existingEpic != null) {
+            existingEpic.setTitle(newEpic.getTitle());
+            existingEpic.setDescription(newEpic.getDescription());
             return true;
         }
         return false;
     }
+
 
     public boolean updateSubtask(Subtask newSubtask) {
         int id = newSubtask.getId();
