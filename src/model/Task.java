@@ -63,6 +63,7 @@ public class Task {
 
     public String toString() {
         int var10000 = this.id;
-        return "model.Task{id=" + var10000 + ", title='" + this.title + "', description='" + this.description + "', status=" + String.valueOf(this.status) + "}";
+        return "model.Task{id=" + var10000 + ", title='" + this.title + "', description='" + this.description +
+                "', status=" + String.valueOf(this.status) + "}";
     }
 }
