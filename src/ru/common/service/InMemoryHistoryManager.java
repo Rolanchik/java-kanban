@@ -1,8 +1,9 @@
-package service;
+package ru.common.service;
 
-import model.Task;
+import ru.common.model.Task;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
@@ -13,13 +14,13 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
 
         history.add(task);
-        if (history.size() > 10) {
+        if (history.size() > MAX_SIZE) {
             history.removeFirst();
         }
     }
 
     @Override
-    public ArrayList<Task> getHistory() {
-        return history;
+    public List<Task> getHistory() {
+        return new ArrayList<>(history);
     }
 }

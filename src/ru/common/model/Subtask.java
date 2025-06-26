@@ -1,4 +1,4 @@
-package model;
+package ru.common.model;
 
 public class Subtask extends Task {
     private int epicId;

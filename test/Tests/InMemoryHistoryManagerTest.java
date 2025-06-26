@@ -1,17 +1,17 @@
 package Tests;
 
-import model.Status;
-import model.Task;
+import ru.common.model.Status;
+import ru.common.model.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import service.HistoryManager;
-import service.TaskManager;
+import ru.common.service.HistoryManager;
+import ru.common.service.TaskManager;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static service.Managers.getDefault;
-import static service.Managers.getDefaultHistory;
+import static ru.common.service.Managers.getDefault;
+import static ru.common.service.Managers.getDefaultHistory;
 
 public class InMemoryHistoryManagerTest {
     private HistoryManager historyManager;
@@ -35,7 +35,7 @@ public class InMemoryHistoryManagerTest {
     @Test
     void addToHistoryAddsTask() {
         historyManager.addToHistory(t1);
-        ArrayList<Task> history = historyManager.getHistory();
+        List<Task> history = historyManager.getHistory();
         assertEquals(1, history.size());
         assertEquals(t1, history.get(0));
         assertTrue(t1.getId() > 0, "ID должен быть установлен");
@@ -48,7 +48,7 @@ public class InMemoryHistoryManagerTest {
             manager.addTask(task);
             manager.getTask(task.getId());
         }
-        ArrayList<Task> history = historyManager.getHistory();
+        List<Task> history = historyManager.getHistory();
         assertEquals(10, history.size(), "Размер истории не должен превышать 10");
 
         // Проверяем, что первые два добавленных таска удалились

@@ -1,17 +1,17 @@
 package Tests;
 
-import model.Epic;
-import model.Status;
-import model.Subtask;
-import model.Task;
+import ru.common.model.Epic;
+import ru.common.model.Status;
+import ru.common.model.Subtask;
+import ru.common.model.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import service.TaskManager;
+import ru.common.service.TaskManager;
 
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static service.Managers.getDefault;
+import static ru.common.service.Managers.getDefault;
 
 class InMemoryTaskManagerTest {
 

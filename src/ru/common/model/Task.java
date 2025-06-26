@@ -1,4 +1,4 @@
-package model;
+package ru.common.model;
 
 import java.util.Objects;
 
@@ -63,7 +63,7 @@ public class Task {
 
     public String toString() {
         int var10000 = this.id;
-        return "model.Task{id=" + var10000 + ", title='" + this.title + "', description='" + this.description +
+        return "ru.common.model.Task{id=" + var10000 + ", title='" + this.title + "', description='" + this.description +
                 "', status=" + String.valueOf(this.status) + "}";
     }
 }

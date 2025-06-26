@@ -1,9 +1,10 @@
-package model;
+package ru.common.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Epic extends Task {
-    private ArrayList<Integer> subtasks = new ArrayList();
+    private List<Integer> subtasks = new ArrayList<>();
 
     public Epic(String title, String description) {
         super(title, description, Status.NEW);
@@ -13,11 +14,11 @@ public class Epic extends Task {
         this.subtasks.add(id);
     }
 
-    public ArrayList<Integer> getSubtasks() {
+    public List<Integer> getSubtasks() {
         return this.subtasks;
     }
 
-    public void setSubtasks(ArrayList<Integer> subtasks) {
+    public void setSubtasks(List<Integer> subtasks) {
         this.subtasks = subtasks;
     }
 

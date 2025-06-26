@@ -1,4 +1,4 @@
-package service;
+package ru.common.service;
 
 public class Managers {
     public static TaskManager getDefault() {
