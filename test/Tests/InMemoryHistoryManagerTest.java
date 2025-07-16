@@ -37,22 +37,44 @@ public class InMemoryHistoryManagerTest {
         historyManager.addToHistory(t1);
         List<Task> history = historyManager.getHistory();
         assertEquals(1, history.size());
-        assertEquals(t1, history.get(0));
-        assertTrue(t1.getId() > 0, "ID должен быть установлен");
+        assertEquals(t1, history.getFirst());
     }
 
     @Test
-    void addToHistoryKeepsMaxTenTasks() {
-        for (int i = 1; i <= 12; i++) {
-            Task task = new Task("Task "+i, "Desc "+i, Status.NEW);
-            manager.addTask(task);
-            manager.getTask(task.getId());
-        }
-        List<Task> history = historyManager.getHistory();
-        assertEquals(10, history.size(), "Размер истории не должен превышать 10");
+    void addToHistoryReAddsTaskMovesToEnd() {
+        Task task1 = new Task("1", "Task 1", Status.NEW);
+        Task task2 = new Task("2", "Task 2", Status.NEW);
+        Task task3 = new Task("3", "Task 3", Status.NEW);
 
-        // Проверяем, что первые два добавленных таска удалились
-        assertEquals(2, history.get(0).getId());
-        assertEquals(11, history.get(9).getId());
+        historyManager.addToHistory(task1);
+        historyManager.addToHistory(task2);
+        historyManager.addToHistory(task3);
+
+        // Повторное добавление task2 — он должен сдвинуться в конец
+        historyManager.addToHistory(task2);
+
+        List<Task> history = historyManager.getHistory();
+        assertEquals(3, history.size());
+        assertEquals(task1.getId(), history.get(0).getId());
+        assertEquals(task3.getId(), history.get(1).getId());
+        assertEquals(task2.getId(), history.get(2).getId());
+    }
+
+    @Test
+    void removeTaskRemovesFromHistory() {
+        Task task1 = new Task("1", "Task 1", Status.NEW);
+        Task task2 = new Task("2", "Task 2", Status.NEW);
+
+        manager.addTask(task1);
+        manager.addTask(task2);
+
+        historyManager.addToHistory(task1);
+        historyManager.addToHistory(task2);
+
+        historyManager.remove(task1.getId());
+
+        List<Task> history = historyManager.getHistory();
+        assertEquals(1, history.size());
+        assertEquals(task2.getId(), history.getFirst().getId());
     }
 }
