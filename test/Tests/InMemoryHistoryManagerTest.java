@@ -46,6 +46,10 @@ public class InMemoryHistoryManagerTest {
         Task task2 = new Task("2", "Task 2", Status.NEW);
         Task task3 = new Task("3", "Task 3", Status.NEW);
 
+        manager.addTask(task1);
+        manager.addTask(task2);
+        manager.addTask(task3);
+
         historyManager.addToHistory(task1);
         historyManager.addToHistory(task2);
         historyManager.addToHistory(task3);
