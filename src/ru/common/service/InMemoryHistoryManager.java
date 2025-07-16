@@ -6,16 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-class Node {
-    Task task;
-    Node prev;
-    Node next;
-
-    public Node(Task task) {
-        this.task = task;
-    }
-}
-
 public abstract class InMemoryHistoryManager implements HistoryManager {
 
     private final Map<Integer, Node> nodes = new HashMap<>();
