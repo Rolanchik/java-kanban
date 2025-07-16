@@ -9,6 +9,8 @@ import java.util.List;
 public interface TaskManager {
 
     boolean addTask(Task task);
+    boolean addEpic(Epic epic);
+    boolean addSubtask(Subtask subtask);
 
     boolean containsIdEpic(int epicId); // Проверка существования эпика по ID
 

@@ -23,27 +23,43 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public boolean addTask(Task task) {
-        if (task instanceof Subtask) {
-            int epicId = ((Subtask) task).getEpicId();
-            Epic epic = epics.get(epicId);
-            if (epic == null) {
-                return false;
-            } else {
-                task.setId(idCounter++);
-                subtasks.put(task.getId(), (Subtask) task);
-                epic.addSubtask(task.getId());
-                updateStatus(epicId);
-                return true;
-            }
-        } else if (task instanceof Epic) {
-            task.setId(idCounter++);
-            epics.put(task.getId(), (Epic) task);
-            return true;
-        } else {
+        if (task != null) {
             task.setId(idCounter++);
             tasks.put(task.getId(), task);
             return true;
         }
+
+        return false;
+    }
+
+    @Override
+    public boolean addEpic(Epic epic) {
+        if (epic != null) {
+            epic.setId(idCounter++);
+            epics.put(epic.getId(), epic);
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean addSubtask(Subtask subtask) {
+        if (subtask != null) {
+            int epicId = subtask.getEpicId();
+            Epic epic = epics.get(epicId);
+            if (epic == null) {
+                return false;
+            } else {
+                subtask.setId(idCounter++);
+                subtasks.put(subtask.getId(), subtask);
+                epic.addSubtask(subtask.getId());
+                updateStatus(epicId);
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override
