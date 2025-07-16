@@ -36,7 +36,7 @@ class InMemoryTaskManagerTest {
     @Test
     void addAndGetEpic() {
         Epic epic = new Epic("Epic1", "Epic Description");
-        boolean added = manager.addTask(epic);
+        boolean added = manager.addEpic(epic);
         assertTrue(added);
         Epic retrieved = manager.getEpic(epic.getId());
         assertEquals(epic.getId(), retrieved.getId());
@@ -48,7 +48,7 @@ class InMemoryTaskManagerTest {
         manager.addTask(epic);
 
         Subtask subtask = new Subtask("Subtask1", "SubDesc", Status.NEW, epic.getId());
-        boolean added = manager.addTask(subtask);
+        boolean added = manager.addSubtask(subtask);
         assertTrue(added);
 
         Subtask retrieved = manager.getSubtask(subtask.getId());
@@ -103,24 +103,24 @@ class InMemoryTaskManagerTest {
     @Test
     void updateEpicStatus() {
         Epic epic = new Epic("Epic", "Desc");
-        manager.addTask(epic);
+        manager.addEpic(epic);
 
         Subtask s1 = new Subtask("Sub1", "Desc", Status.NEW, epic.getId());
         Subtask s2 = new Subtask("Sub2", "Desc", Status.NEW, epic.getId());
-        manager.addTask(s1);
-        manager.addTask(s2);
+        manager.addSubtask(s1);
+        manager.addSubtask(s2);
 
         // Все новые - статус эпика NEW
         assertEquals(Status.NEW, manager.getEpic(epic.getId()).getStatus());
 
         // Обновим статус одной подзадачи на DONE
         s1.setStatus(Status.DONE);
-        manager.updateTask(s1);
+        manager.updateSubtask(s1);
         assertEquals(Status.IN_PROGRESS, manager.getEpic(epic.getId()).getStatus());
 
         // Обновим вторую подзадачу также на DONE
         s2.setStatus(Status.DONE);
-        manager.updateTask(s2);
+        manager.updateSubtask(s2);
         assertEquals(Status.DONE, manager.getEpic(epic.getId()).getStatus());
     }
 
@@ -129,10 +129,10 @@ class InMemoryTaskManagerTest {
         Task t = new Task("T", "Desc", Status.NEW);
         Epic e = new Epic("E", "Desc");
         manager.addTask(t);
-        manager.addTask(e);
+        manager.addEpic(e);
 
         Subtask s = new Subtask("S", "Desc", Status.NEW, e.getId());
-        manager.addTask(s);
+        manager.addSubtask(s);
 
         manager.deleteAllTasks();
         assertTrue(manager.printTasks().isEmpty());
