@@ -45,7 +45,7 @@ class InMemoryTaskManagerTest {
     @Test
     void addAndGetSubtask() {
         Epic epic = new Epic("EpicWithSubtasks", "Desc");
-        manager.addTask(epic);
+        manager.addEpic(epic);
 
         Subtask subtask = new Subtask("Subtask1", "SubDesc", Status.NEW, epic.getId());
         boolean added = manager.addSubtask(subtask);
@@ -70,12 +70,12 @@ class InMemoryTaskManagerTest {
     @Test
     void deleteEpicAndSubtasks() {
         Epic epic = new Epic("EpicToDelete", "Desc");
-        manager.addTask(epic);
+        manager.addEpic(epic);
 
         Subtask s1 = new Subtask("Sub1", "Desc", Status.NEW, epic.getId());
         Subtask s2 = new Subtask("Sub2", "Desc", Status.NEW, epic.getId());
-        manager.addTask(s1);
-        manager.addTask(s2);
+        manager.addSubtask(s1);
+        manager.addSubtask(s2);
 
         boolean deleted = manager.deleteEpicById(epic.getId());
         assertTrue(deleted);
