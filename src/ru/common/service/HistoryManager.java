@@ -8,9 +8,10 @@ import java.util.List;
 public interface HistoryManager {
 
     final List<Task> history = new ArrayList<>();
-    final int MAX_SIZE = 10;
 
     void addToHistory(Task task);
+
+    void remove(int id);
 
     List<Task> getHistory();
 }
