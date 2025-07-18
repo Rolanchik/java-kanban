@@ -249,14 +249,8 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public List<Task> getHistory() {
-        List<Task> history = new ArrayList<>();
-        Node current = historyManager.getHead();
-        while (current != null) {
-            history.add(current.task);
-            current = current.next;
-        }
-        return history;
+    public List<Task> getHistoryList() {
+        return historyManager.getHistory();
     }
 
     public void updateStatus(int epicId) {

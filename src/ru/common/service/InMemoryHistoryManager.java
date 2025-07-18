@@ -2,7 +2,9 @@ package ru.common.service;
 
 import ru.common.model.Task;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class InMemoryHistoryManager implements HistoryManager {
@@ -61,7 +63,13 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     @Override
-    public Node getHead() {
-        return head;
+    public List<Task> getHistory() {
+        List<Task> history = new ArrayList<>();
+        Node current = head;
+        while (current != null) {
+            history.add(current.task);
+            current = current.next;
+        }
+        return history;
     }
 }
