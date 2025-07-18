@@ -198,9 +198,11 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public boolean updateTask(Task newTask) {
         int id = newTask.getId();
-        if (tasks.containsKey(id)) {
-            historyManager.remove(id);
-            tasks.put(id, newTask);
+        Task existingTask = tasks.get(id);
+        if (existingTask != null) {
+            existingTask.setTitle(newTask.getTitle());
+            existingTask.setDescription(newTask.getDescription());
+            existingTask.setStatus(newTask.getStatus());
             return true;
         }
         return false;
@@ -211,7 +213,6 @@ public class InMemoryTaskManager implements TaskManager {
         int id = newEpic.getId();
         Epic existingEpic = epics.get(id);
         if (existingEpic != null) {
-            historyManager.remove(id);
             existingEpic.setTitle(newEpic.getTitle());
             existingEpic.setDescription(newEpic.getDescription());
             return true;
@@ -222,9 +223,11 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public boolean updateSubtask(Subtask newSubtask) {
         int id = newSubtask.getId();
-        if (subtasks.containsKey(id)) {
-            historyManager.remove(id);
-            subtasks.put(id, newSubtask);
+        Subtask existingSubtask = subtasks.get(id);
+        if (existingSubtask != null) {
+            existingSubtask.setTitle(newSubtask.getTitle());
+            existingSubtask.setDescription(newSubtask.getDescription());
+            existingSubtask.setStatus(newSubtask.getStatus());
             Epic epic = epics.get(newSubtask.getEpicId());
             if (epic != null) {
                 updateStatus(newSubtask.getEpicId());
@@ -243,6 +246,17 @@ public class InMemoryTaskManager implements TaskManager {
             System.out.println("Эпик с таким ID не найден.");
             return new ArrayList<>();
         }
+    }
+
+    @Override
+    public List<Task> getHistory() {
+        List<Task> history = new ArrayList<>();
+        Node current = historyManager.getHead();
+        while (current != null) {
+            history.add(current.task);
+            current = current.next;
+        }
+        return history;
     }
 
     public void updateStatus(int epicId) {

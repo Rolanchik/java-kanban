@@ -28,14 +28,14 @@ public class InMemoryHistoryManagerTest {
     @Test
     void addToHistoryNullTaskDoesNothing() {
         historyManager.addToHistory(null);
-        assertTrue(historyManager.getHistory().isEmpty(), "История должна оставаться пустой при добавлении" +
+        assertTrue(manager.getHistory().isEmpty(), "История должна оставаться пустой при добавлении" +
                 " null");
     }
 
     @Test
     void addToHistoryAddsTask() {
         historyManager.addToHistory(t1);
-        List<Task> history = historyManager.getHistory();
+        List<Task> history = manager.getHistory();
         assertEquals(1, history.size());
         assertEquals(t1, history.getFirst());
     }
@@ -57,7 +57,7 @@ public class InMemoryHistoryManagerTest {
         // Повторное добавление task2 — он должен сдвинуться в конец
         historyManager.addToHistory(task2);
 
-        List<Task> history = historyManager.getHistory();
+        List<Task> history = manager.getHistory();
         assertEquals(3, history.size());
         assertEquals(task1.getId(), history.get(0).getId());
         assertEquals(task3.getId(), history.get(1).getId());
@@ -77,7 +77,7 @@ public class InMemoryHistoryManagerTest {
 
         historyManager.remove(task1.getId());
 
-        List<Task> history = historyManager.getHistory();
+        List<Task> history = manager.getHistory();
         assertEquals(1, history.size());
         assertEquals(task2.getId(), history.getFirst().getId());
     }

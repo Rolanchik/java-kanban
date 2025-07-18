@@ -47,4 +47,6 @@ public interface TaskManager {
     boolean updateSubtask(Subtask newSubtask);
 
     List<Integer> getSubtasksOfEpic(int epicId);
+
+    List<Task> getHistory();
 }
