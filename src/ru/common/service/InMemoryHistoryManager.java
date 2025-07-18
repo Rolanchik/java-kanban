@@ -62,6 +62,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         nodes.put(task.getId(), newNode);
     }
 
+    @Override
     public Node getHead() {
         return head;
     }
