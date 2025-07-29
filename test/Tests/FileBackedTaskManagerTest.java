@@ -43,7 +43,6 @@ class FileBackedTaskManagerTest {
 
         assertFalse(manager.getTasks().isEmpty(), "Task должен быть добавлен");
 
-        // Проверка, что файл реально сохранился и содержит данные
         try {
             String content = Files.readString(testFilePath);
             assertTrue(content.contains("Test Task"), "Файл должен содержать добавленную задачу");
@@ -63,7 +62,6 @@ class FileBackedTaskManagerTest {
         assertFalse(manager.getEpics().isEmpty());
         assertFalse(manager.getSubtasks().isEmpty());
 
-        // Убедимся, что субтаск привязан к эпику
         assertEquals(epic.getId(), subtask.getEpicId());
     }
 
@@ -78,7 +76,6 @@ class FileBackedTaskManagerTest {
         Subtask subtask = new Subtask("Loaded Subtask", "Desc Subtask", Status.NEW, epic.getId());
         manager.addSubtask(subtask);
 
-        // Сохраняем, потом загружаем из файла
         manager.save();
 
         FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(testFilePath.toFile());

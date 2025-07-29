@@ -139,22 +139,31 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     public Task fromString(String value) throws IllegalArgumentException {
         String[] parts = value.split(",", -1);
+        int id = Integer.parseInt(parts[0]);
         TaskType taskType = TaskType.valueOf(parts[1]);
-        String tittle = parts[2];
+        String title = parts[2];
         Status status = Status.valueOf(parts[3]);
         String description = parts[4];
-        int epicId = Integer.parseInt(parts[5]);
+        String epicIdStr = parts[5];
 
         switch (taskType) {
             case TASK:
-                return new Task(tittle, description, status);
+                Task task = new Task(title, description, status);
+                task.setId(id);
+                return task;
             case EPIC:
-                return new Epic(tittle, description);
+                Epic epic = new Epic(title, description);
+                epic.setId(id);
+                return epic;
             case SUBTASK:
-                return new Subtask(tittle, description, status, epicId);
+                int epicId = epicIdStr.isEmpty() ? -1 : Integer.parseInt(epicIdStr);
+                Subtask subtask = new Subtask(title, description, status, epicId);
+                subtask.setId(id);
+                return subtask;
             default:
                 throw new IllegalArgumentException("Unknown this type: " + taskType);
         }
+
     }
 
     public static FileBackedTaskManager loadFromFile(File file) throws IOException {
