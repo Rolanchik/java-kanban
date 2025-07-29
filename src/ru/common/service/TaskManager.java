@@ -5,8 +5,15 @@ import ru.common.model.Subtask;
 import ru.common.model.Task;
 
 import java.util.List;
+import java.util.Map;
 
 public interface TaskManager {
+
+    List<Task> getTasks();
+
+    List<Epic> getEpics();
+
+    List<Subtask> getSubtasks();
 
     boolean addTask(Task task);
 
