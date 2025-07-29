@@ -145,7 +145,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         String description = parts[4];
         int epicId = Integer.parseInt(parts[5]);
 
-        switch(taskType) {
+        switch (taskType) {
             case TASK:
                 return new Task(tittle, description, status);
             case EPIC:
