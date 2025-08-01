@@ -26,7 +26,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public boolean addEpic(Epic epic) {
-        boolean added = super.addTask(epic);
+        boolean added = super.addEpic(epic);
         save();
         return added;
     }
