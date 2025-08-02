@@ -46,6 +46,10 @@ public class Task {
         this.description = description;
     }
 
+    public TaskType getTaskType() {
+        return TaskType.TASK;
+    }
+
     public boolean equals(Object o) {
         if (this == o) {
             return true;

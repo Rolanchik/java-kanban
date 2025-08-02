@@ -10,6 +10,11 @@ public class Epic extends Task {
         super(title, description, Status.NEW);
     }
 
+    @Override
+    public TaskType getTaskType() {
+        return TaskType.EPIC;
+    }
+
     public void addSubtask(Integer id) {
         this.subtasks.add(id);
     }
