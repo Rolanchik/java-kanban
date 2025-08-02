@@ -12,6 +12,12 @@ import java.util.List;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private final Path filePath;
+    private final int ID_INDEX = 0;
+    private final int TASKTYPE_INDEX = 1;
+    private final int TITTLE_INDEX = 2;
+    private final int STATUS_INDEX = 3;
+    private final int DESCRIPTION_INDEX = 4;
+    private final int EPICIDSTR_INDEX = 5;
 
     public FileBackedTaskManager(Path filePath) {
         this.filePath = filePath;
@@ -124,7 +130,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     public String toString(Task task) {
         String epicId = "";
-        if (task instanceof Subtask) {
+        if (task.getTaskType() == TaskType.SUBTASK) {
             epicId = String.valueOf(((Subtask) task).getEpicId());
         }
 
@@ -139,12 +145,12 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     public Task fromString(String value) throws IllegalArgumentException {
         String[] parts = value.split(",", -1);
-        int id = Integer.parseInt(parts[0]);
-        TaskType taskType = TaskType.valueOf(parts[1]);
-        String title = parts[2];
-        Status status = Status.valueOf(parts[3]);
-        String description = parts[4];
-        String epicIdStr = parts[5];
+        int id = Integer.parseInt(parts[ID_INDEX]);
+        TaskType taskType = TaskType.valueOf(parts[TASKTYPE_INDEX]);
+        String title = parts[TASKTYPE_INDEX];
+        Status status = Status.valueOf(parts[STATUS_INDEX]);
+        String description = parts[DESCRIPTION_INDEX];
+        String epicIdStr = parts[EPICIDSTR_INDEX];
 
         switch (taskType) {
             case TASK:
@@ -176,9 +182,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 String line = lines.get(i);
                 if (line.isEmpty()) continue;
                 Task task = lastFile.fromString(line);
-                if (task instanceof Epic) {
+                if (task.getTaskType() == TaskType.EPIC) {
                     lastFile.addEpic((Epic) task);
-                } else if (task instanceof Subtask) {
+                } else if (task.getTaskType() == TaskType.SUBTASK) {
                     lastFile.addSubtask((Subtask) task);
                 } else {
                     lastFile.addTask(task);
