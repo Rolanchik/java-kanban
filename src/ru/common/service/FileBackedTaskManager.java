@@ -11,13 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
-    private final Path filePath;
-    private final int ID_INDEX = 0;
-    private final int TASKTYPE_INDEX = 1;
-    private final int TITTLE_INDEX = 2;
-    private final int STATUS_INDEX = 3;
-    private final int DESCRIPTION_INDEX = 4;
-    private final int EPICIDSTR_INDEX = 5;
+    private final Path filePath;private static final int idIndex = 0;
+    private static final int taskTypeIndex = 1;
+    private static final int titleIndex = 2;
+    private static final int statusIndex = 3;
+    private static final int descriptionIndex = 4;
+    private static final int epicIdStrIndex = 5;
+
 
     public FileBackedTaskManager(Path filePath) {
         this.filePath = filePath;
@@ -145,12 +145,12 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     public Task fromString(String value) throws IllegalArgumentException {
         String[] parts = value.split(",", -1);
-        int id = Integer.parseInt(parts[ID_INDEX]);
-        TaskType taskType = TaskType.valueOf(parts[TASKTYPE_INDEX]);
-        String title = parts[TASKTYPE_INDEX];
-        Status status = Status.valueOf(parts[STATUS_INDEX]);
-        String description = parts[DESCRIPTION_INDEX];
-        String epicIdStr = parts[EPICIDSTR_INDEX];
+        int id = Integer.parseInt(parts[idIndex]);
+        TaskType taskType = TaskType.valueOf(parts[taskTypeIndex]);
+        String title = parts[titleIndex];
+        Status status = Status.valueOf(parts[statusIndex]);
+        String description = parts[descriptionIndex];
+        String epicIdStr = parts[epicIdStrIndex];
 
         switch (taskType) {
             case TASK:
