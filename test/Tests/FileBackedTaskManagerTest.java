@@ -36,7 +36,8 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
 
     @Test
     void addTaskAndSaveTest() {
-        Task task = new Task("Test Task", "Description", Status.NEW, Duration.ZERO, LocalDateTime.now());
+        Task task = new Task("Test Task", "Description", Status.NEW, Duration.ofHours(1),
+                LocalDateTime.of(2024, 7, 2, 11, 0));
         taskManager.addTask(task);
 
 
@@ -56,7 +57,7 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
         taskManager.addEpic(epic);
 
         Subtask subtask = new Subtask("Test Subtask", "Description Subtask", Status.IN_PROGRESS,
-                epic.getId(), Duration.ZERO, LocalDateTime.now());
+                epic.getId(), Duration.ofHours(1), LocalDateTime.of(2024, 7, 2, 11, 0));
         taskManager.addSubtask(subtask);
 
         assertFalse(taskManager.getEpics().isEmpty());
@@ -67,14 +68,15 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
 
     @Test
     void saveAndLoadFromFileTest() throws IOException {
-        Task task = new Task("Loaded Task", "Desc", Status.DONE, Duration.ZERO, LocalDateTime.now());
+        Task task = new Task("Loaded Task", "Desc", Status.DONE, Duration.ofHours(1),
+                LocalDateTime.of(2024, 7, 2, 11, 0));
         taskManager.addTask(task);
 
         Epic epic = new Epic("Loaded Epic", "Desc Epic");
         taskManager.addEpic(epic);
 
         Subtask subtask = new Subtask("Loaded Subtask", "Desc Subtask", Status.NEW, epic.getId(),
-                Duration.ZERO, LocalDateTime.now());
+                Duration.ofHours(1), LocalDateTime.of(2025, 7, 2, 11, 0));
         taskManager.addSubtask(subtask);
 
         taskManager.save();

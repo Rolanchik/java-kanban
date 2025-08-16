@@ -63,17 +63,16 @@ public class Epic extends Task {
             Subtask sub = taskManager.getSubtask(s);
             if (sub != null) {
                 total = total.plus(sub.getDuration());
-            }
+                LocalDateTime sStart = sub.getStartTime();
+                LocalDateTime sEnd = sub.getEndTime();
 
-            LocalDateTime sStart = sub.getStartTime();
-            LocalDateTime sEnd = sub.getEndTime();
+                if (sStart != null && (minStart == null || sStart.isBefore(minStart))) {
+                    minStart = sStart;
+                }
 
-            if (sStart != null && (minStart == null || sStart.isBefore(minStart))) {
-                minStart = sStart;
-            }
-
-            if (sEnd != null && (maxEnd == null || sEnd.isAfter(maxEnd))) {
-                maxEnd = sEnd;
+                if (sEnd != null && (maxEnd == null || sEnd.isAfter(maxEnd))) {
+                    maxEnd = sEnd;
+                }
             }
         }
 

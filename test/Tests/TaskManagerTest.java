@@ -40,9 +40,9 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.addEpic(epic);
 
         Subtask subtask1 = new Subtask("Subtask 1", "Desc", Status.NEW, epic.getId(), Duration.ofHours(2),
-                LocalDateTime.of(2025, 1, 1, 10, 0));
+                LocalDateTime.of(2025, 1, 2, 10, 0));
         Subtask subtask2 = new Subtask("Subtask 2", "Desc", Status.NEW, epic.getId(), Duration.ofHours(2),
-                LocalDateTime.of(2025, 1, 1, 10, 0));
+                LocalDateTime.of(2025, 2, 3, 10, 0));
 
         taskManager.addSubtask(subtask1);
         taskManager.addSubtask(subtask2);
@@ -55,10 +55,10 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     void epicStatusAllNew() {
         Epic epic = new Epic("Epic", "Desc");
         taskManager.addEpic(epic);
-        taskManager.addSubtask(new Subtask("S1", "Desc", Status.NEW, epic.getId(), Duration.ZERO,
-                LocalDateTime.now()));
-        taskManager.addSubtask(new Subtask("S2", "Desc", Status.NEW, epic.getId(), Duration.ZERO,
-                LocalDateTime.now()));
+        taskManager.addSubtask(new Subtask("S1", "Desc", Status.NEW, epic.getId(), Duration.ofHours(2),
+                LocalDateTime.of(2025, 1, 4, 10, 0)));
+        taskManager.addSubtask(new Subtask("S2", "Desc", Status.NEW, epic.getId(), Duration.ofHours(2),
+                LocalDateTime.of(2025, 2, 5, 10, 0)));
 
         assertEquals(Status.NEW, taskManager.getEpics().get(0).getStatus());
     }
@@ -67,10 +67,10 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     void epicStatusAllDone() {
         Epic epic = new Epic("Epic", "Desc");
         taskManager.addEpic(epic);
-        taskManager.addSubtask(new Subtask("S1", "Desc", Status.DONE, epic.getId(), Duration.ZERO,
-                LocalDateTime.now()));
-        taskManager.addSubtask(new Subtask("S2", "Desc", Status.DONE, epic.getId(), Duration.ZERO,
-                LocalDateTime.now()));
+        taskManager.addSubtask(new Subtask("S1", "Desc", Status.DONE, epic.getId(), Duration.ofHours(2),
+                LocalDateTime.of(2025, 1, 6, 10, 0)));
+        taskManager.addSubtask(new Subtask("S2", "Desc", Status.DONE, epic.getId(), Duration.ofHours(2),
+                LocalDateTime.of(2025, 2, 7, 10, 0)));
 
         assertEquals(Status.DONE, taskManager.getEpics().get(0).getStatus());
     }
@@ -79,10 +79,10 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     void epicStatusNewAndDone() {
         Epic epic = new Epic("Epic", "Desc");
         taskManager.addEpic(epic);
-        taskManager.addSubtask(new Subtask("S1", "Desc", Status.NEW, epic.getId(), Duration.ZERO,
-                LocalDateTime.now()));
-        taskManager.addSubtask(new Subtask("S2", "Desc", Status.DONE, epic.getId(), Duration.ZERO,
-                LocalDateTime.now()));
+        taskManager.addSubtask(new Subtask("S1", "Desc", Status.NEW, epic.getId(), Duration.ofHours(2),
+                LocalDateTime.of(2025, 2, 8, 10, 0)));
+        taskManager.addSubtask(new Subtask("S2", "Desc", Status.DONE, epic.getId(), Duration.ofHours(2),
+                LocalDateTime.of(2025, 1, 9, 10, 0)));
 
         assertEquals(Status.IN_PROGRESS, taskManager.getEpics().get(0).getStatus());
     }
@@ -91,8 +91,8 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     void epicStatusInProgress() {
         Epic epic = new Epic("Epic", "Desc");
         taskManager.addEpic(epic);
-        taskManager.addSubtask(new Subtask("S1", "Desc", Status.IN_PROGRESS, epic.getId(), Duration.ZERO,
-                LocalDateTime.now()));
+        taskManager.addSubtask(new Subtask("S1", "Desc", Status.IN_PROGRESS, epic.getId(),
+                Duration.ofHours(2), LocalDateTime.of(2025, 2, 10, 10, 0)));
 
         assertEquals(Status.IN_PROGRESS, taskManager.getEpics().get(0).getStatus());
     }
@@ -101,8 +101,8 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     void subtaskHasEpic() {
         Epic epic = new Epic("Epic", "Desc");
         taskManager.addEpic(epic);
-        Subtask subtask = new Subtask("Subtask", "Desc", Status.NEW, epic.getId(), Duration.ZERO,
-                LocalDateTime.now());
+        Subtask subtask = new Subtask("Subtask", "Desc", Status.NEW, epic.getId(), Duration.ofHours(2),
+                LocalDateTime.of(2025, 2, 11, 10, 0));
         taskManager.addSubtask(subtask);
 
         assertTrue(taskManager.getEpics().contains(epic));

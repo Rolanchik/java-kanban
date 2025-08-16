@@ -109,6 +109,7 @@ public class InMemoryTaskManager implements TaskManager {
 
         epic.addSubtask(subtask.getId());
         epic.recalcTimeFields();
+        updateStatus(epic.getId());
         return true;
     }
 
