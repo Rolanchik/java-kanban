@@ -6,43 +6,41 @@ import ru.common.model.Status;
 import ru.common.model.Subtask;
 import ru.common.model.Task;
 import ru.common.service.FileBackedTaskManager;
-import ru.common.service.InMemoryTaskManager;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FileBackedTaskManagerTest {
+public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
 
     private static Path testFilePath;
-    private FileBackedTaskManager fileBackedTaskManager;
 
     @BeforeAll
-    static void setupAll() throws IOException {
+    static void beforeAll() throws IOException {
         testFilePath = Files.createTempFile("tasks", ".csv");
     }
 
     @AfterAll
-    static void cleanupAll() throws IOException {
+    static void afterAll() throws IOException {
         Files.deleteIfExists(testFilePath);
     }
 
-    @BeforeEach
-    void setup() {
-        fileBackedTaskManager = new FileBackedTaskManager(testFilePath);
-        fileBackedTaskManager.deleteAllTasks();
-        fileBackedTaskManager.deleteAllEpics();
-        fileBackedTaskManager.deleteAllSubtasks();
+    @Override
+    protected FileBackedTaskManager createTaskManager() {
+        return new FileBackedTaskManager(testFilePath);
     }
 
     @Test
     void addTaskAndSaveTest() {
-        Task task = new Task("Test Task", "Description", Status.NEW);
-        fileBackedTaskManager.addTask(task);
+        Task task = new Task("Test Task", "Description", Status.NEW, Duration.ZERO, LocalDateTime.now());
+        taskManager.addTask(task);
 
-        assertFalse(fileBackedTaskManager.getTasks().isEmpty(), "Task должен быть добавлен");
+
+        assertFalse(taskManager.getTasks().isEmpty(), "Task должен быть добавлен");
 
         try {
             String content = Files.readString(testFilePath);
@@ -55,48 +53,48 @@ class FileBackedTaskManagerTest {
     @Test
     void addEpicAndSubtaskTest() {
         Epic epic = new Epic("Test Epic", "Description Epic");
-        fileBackedTaskManager.addEpic(epic);
+        taskManager.addEpic(epic);
 
-        Subtask subtask = new Subtask("Test Subtask", "Description Subtask", Status.IN_PROGRESS, epic.getId());
-        fileBackedTaskManager.addSubtask(subtask);
+        Subtask subtask = new Subtask("Test Subtask", "Description Subtask", Status.IN_PROGRESS,
+                epic.getId(), Duration.ZERO, LocalDateTime.now());
+        taskManager.addSubtask(subtask);
 
-        assertFalse(fileBackedTaskManager.getEpics().isEmpty());
-        assertFalse(fileBackedTaskManager.getSubtasks().isEmpty());
+        assertFalse(taskManager.getEpics().isEmpty());
+        assertFalse(taskManager.getSubtasks().isEmpty());
 
         assertEquals(epic.getId(), subtask.getEpicId());
     }
 
     @Test
     void saveAndLoadFromFileTest() throws IOException {
-        Task task = new Task("Loaded Task", "Desc", Status.DONE);
-        fileBackedTaskManager.addTask(task);
+        Task task = new Task("Loaded Task", "Desc", Status.DONE, Duration.ZERO, LocalDateTime.now());
+        taskManager.addTask(task);
 
         Epic epic = new Epic("Loaded Epic", "Desc Epic");
-        fileBackedTaskManager.addEpic(epic);
+        taskManager.addEpic(epic);
 
-        Subtask subtask = new Subtask("Loaded Subtask", "Desc Subtask", Status.NEW, epic.getId());
-        fileBackedTaskManager.addSubtask(subtask);
+        Subtask subtask = new Subtask("Loaded Subtask", "Desc Subtask", Status.NEW, epic.getId(),
+                Duration.ZERO, LocalDateTime.now());
+        taskManager.addSubtask(subtask);
 
-        fileBackedTaskManager.save();
+        taskManager.save();
 
-        FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(testFilePath.toFile());
+        assertEquals(1, taskManager.getTasks().size(), "Должна быть загружена 1 задача");
+        assertEquals(1, taskManager.getEpics().size(), "Должен быть загружен 1 эпик");
+        assertEquals(1, taskManager.getSubtasks().size(), "Должен быть загружен 1 субтаск");
 
-        assertEquals(1, fileBackedTaskManager.getTasks().size(), "Должна быть загружена 1 задача");
-        assertEquals(1, fileBackedTaskManager.getEpics().size(), "Должен быть загружен 1 эпик");
-        assertEquals(1, fileBackedTaskManager.getSubtasks().size(), "Должен быть загружен 1 субтаск");
-
-        Task loadedTask = fileBackedTaskManager.getTasks().get(0);
+        Task loadedTask = taskManager.getTasks().get(0);
         assertEquals("Loaded Task", loadedTask.getTitle());
     }
 
     @Test
     void deleteTasksTest() {
-        Task task = new Task("Delete Task", "Desc", Status.NEW);
-        fileBackedTaskManager.addTask(task);
+        Task task = new Task("Delete Task", "Desc", Status.NEW, Duration.ZERO, LocalDateTime.now());
+        taskManager.addTask(task);
 
-        assertFalse(fileBackedTaskManager.getTasks().isEmpty());
+        assertFalse(taskManager.getTasks().isEmpty());
 
-        fileBackedTaskManager.deleteAllTasks();
-        assertTrue(fileBackedTaskManager.getTasks().isEmpty());
+        taskManager.deleteAllTasks();
+        assertTrue(taskManager.getTasks().isEmpty());
     }
 }

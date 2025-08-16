@@ -7,17 +7,21 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
-    private final Path filePath;private static final int idIndex = 0;
+    private final Path filePath;
+    private static final int idIndex = 0;
     private static final int taskTypeIndex = 1;
     private static final int titleIndex = 2;
     private static final int statusIndex = 3;
     private static final int descriptionIndex = 4;
     private static final int epicIdStrIndex = 5;
-
+    private static final int durationIndex = 6;
+    private static final int startTimeIndex = 7;
 
     public FileBackedTaskManager(Path filePath) {
         this.filePath = filePath;
@@ -107,7 +111,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     public void save() {
         List<String> lines = new ArrayList<>();
 
-        lines.add("id,type,name,status,description,epic");
+        lines.add("id,type,name,status,description,epic,duration,startTime");
 
         for (Task task : super.getTasks()) {
             lines.add(toString(task));
@@ -134,13 +138,15 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             epicId = String.valueOf(((Subtask) task).getEpicId());
         }
 
-        return String.format("%d,%s,%s,%s,%s,%s",
+        return String.format("%d,%s,%s,%s,%s,%s,%d,%s",
                 task.getId(),
                 task.getTaskType(),
                 task.getTitle(),
                 task.getStatus(),
                 task.getDescription(),
-                epicId);
+                epicId,
+                task.getDuration().toMinutes(),
+                task.getStartTime());
     }
 
     public Task fromString(String value) throws IllegalArgumentException {
@@ -151,10 +157,12 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         Status status = Status.valueOf(parts[statusIndex]);
         String description = parts[descriptionIndex];
         String epicIdStr = parts[epicIdStrIndex];
+        Duration duration = Duration.ofMinutes(Long.parseLong(parts[durationIndex]));
+        LocalDateTime startTime = LocalDateTime.parse(parts[startTimeIndex]);
 
         switch (taskType) {
             case TASK:
-                Task task = new Task(title, description, status);
+                Task task = new Task(title, description, status, duration, startTime);
                 task.setId(id);
                 return task;
             case EPIC:
@@ -163,7 +171,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 return epic;
             case SUBTASK:
                 int epicId = epicIdStr.isEmpty() ? -1 : Integer.parseInt(epicIdStr);
-                Subtask subtask = new Subtask(title, description, status, epicId);
+                Subtask subtask = new Subtask(title, description, status, epicId, duration, startTime);
                 subtask.setId(id);
                 return subtask;
             default:
