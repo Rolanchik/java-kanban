@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import ru.common.service.HistoryManager;
 import ru.common.service.TaskManager;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,45 +16,70 @@ import static ru.common.service.Managers.getDefault;
 import static ru.common.service.Managers.getDefaultHistory;
 
 public class InMemoryHistoryManagerTest {
-    private HistoryManager historyManager;
+    private HistoryManager taskManager;
     private TaskManager manager;
     private Task t1;
 
     @BeforeEach
     void setUp() {
-        historyManager = getDefaultHistory();
+        taskManager = getDefaultHistory();
         manager = getDefault();
-        t1 = new Task("Task", "Description", Status.NEW);
+        t1 = new Task("Task", "Description", Status.NEW, Duration.ZERO, LocalDateTime.now());
     }
 
     @Test
     void addToHistoryNullTaskDoesNothing() {
-        historyManager.addToHistory(null);
-        assertTrue(historyManager.getHistory().isEmpty(), "История должна оставаться пустой при добавлении" +
+        taskManager.addToHistory(null);
+        assertTrue(taskManager.getHistory().isEmpty(), "История должна оставаться пустой при добавлении" +
                 " null");
     }
 
     @Test
     void addToHistoryAddsTask() {
-        historyManager.addToHistory(t1);
-        List<Task> history = historyManager.getHistory();
+        taskManager.addToHistory(t1);
+        List<Task> history = taskManager.getHistory();
         assertEquals(1, history.size());
         assertEquals(t1, history.get(0));
-        assertTrue(t1.getId() > 0, "ID должен быть установлен");
     }
 
     @Test
-    void addToHistoryKeepsMaxTenTasks() {
-        for (int i = 1; i <= 12; i++) {
-            Task task = new Task("Task "+i, "Desc "+i, Status.NEW);
-            manager.addTask(task);
-            manager.getTask(task.getId());
-        }
-        List<Task> history = historyManager.getHistory();
-        assertEquals(10, history.size(), "Размер истории не должен превышать 10");
+    void addToHistoryReAddsTaskMovesToEnd() {
+        Task task1 = new Task("1", "Task 1", Status.NEW, Duration.ZERO, LocalDateTime.now());
+        Task task2 = new Task("2", "Task 2", Status.NEW, Duration.ZERO, LocalDateTime.now());
+        Task task3 = new Task("3", "Task 3", Status.NEW, Duration.ZERO, LocalDateTime.now());
 
-        // Проверяем, что первые два добавленных таска удалились
-        assertEquals(2, history.get(0).getId());
-        assertEquals(11, history.get(9).getId());
+        manager.addTask(task1);
+        manager.addTask(task2);
+        manager.addTask(task3);
+
+        taskManager.addToHistory(task1);
+        taskManager.addToHistory(task2);
+        taskManager.addToHistory(task3);
+
+        taskManager.addToHistory(task2);
+
+        List<Task> history = taskManager.getHistory();
+        assertEquals(3, history.size());
+        assertEquals(task1.getId(), history.get(0).getId());
+        assertEquals(task3.getId(), history.get(1).getId());
+        assertEquals(task2.getId(), history.get(2).getId());
+    }
+
+    @Test
+    void removeTaskRemovesFromHistory() {
+        Task task1 = new Task("1", "Task 1", Status.NEW, Duration.ZERO, LocalDateTime.now());
+        Task task2 = new Task("2", "Task 2", Status.NEW, Duration.ZERO, LocalDateTime.now());
+
+        manager.addTask(task1);
+        manager.addTask(task2);
+
+        taskManager.addToHistory(task1);
+        taskManager.addToHistory(task2);
+
+        taskManager.remove(task1.getId());
+
+        List<Task> history = taskManager.getHistory();
+        assertEquals(1, history.size());
+        assertEquals(task2.getId(), history.get(0).getId());
     }
 }
