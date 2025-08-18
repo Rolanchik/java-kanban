@@ -138,9 +138,11 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             epicId = String.valueOf(((Subtask) task).getEpicId());
         }
 
-        long durationMinutes = (task.getDuration() != null) ? task.getDuration().toMinutes() : 0;
+        String durationMinutes = (task.getDuration() != null) ? String.valueOf(task.getDuration().toMinutes()) : "";
 
-        return String.format("%d,%s,%s,%s,%s,%s,%d,%s",
+        String startTime = (task.getStartTime() != null) ? task.getStartTime().toString() : "";
+
+        return String.format("%d,%s,%s,%s,%s,%s,%s,%s",
                 task.getId(),
                 task.getTaskType(),
                 task.getTitle(),
@@ -148,7 +150,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 task.getDescription(),
                 epicId,
                 durationMinutes,
-                task.getStartTime());
+                startTime);
     }
 
     public Task fromString(String value) throws IllegalArgumentException {
@@ -159,8 +161,16 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         Status status = Status.valueOf(parts[statusIndex]);
         String description = parts[descriptionIndex];
         String epicIdStr = parts[epicIdStrIndex];
-        Duration duration = Duration.ofMinutes(Long.parseLong(parts[durationIndex]));
-        LocalDateTime startTime = LocalDateTime.parse(parts[startTimeIndex]);
+
+        Duration duration = null;
+        if (!parts[durationIndex].equals("") && !parts[durationIndex].isEmpty()) {
+            duration = Duration.ofMinutes(Long.parseLong(parts[durationIndex]));
+        }
+
+        LocalDateTime startTime = null;
+        if (!parts[startTimeIndex].equals("") && !parts[startTimeIndex].isEmpty()) {
+            startTime = LocalDateTime.parse(parts[startTimeIndex]);
+        }
 
         switch (taskType) {
             case TASK:
@@ -179,11 +189,11 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             default:
                 throw new IllegalArgumentException("Unknown this type: " + taskType);
         }
-
     }
 
+
     public static FileBackedTaskManager loadFromFile(File file) throws IOException {
-        FileBackedTaskManager lastFile = new FileBackedTaskManager(file.toPath());
+        FileBackedTaskManager manager = new FileBackedTaskManager(file.toPath());
 
         try {
             List<String> lines = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
@@ -191,19 +201,33 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             for (int i = 1; i < lines.size(); i++) {
                 String line = lines.get(i);
                 if (line.isEmpty()) continue;
-                Task task = lastFile.fromString(line);
-                if (task.getTaskType() == TaskType.EPIC) {
-                    lastFile.addEpic((Epic) task);
-                } else if (task.getTaskType() == TaskType.SUBTASK) {
-                    lastFile.addSubtask((Subtask) task);
-                } else {
-                    lastFile.addTask(task);
+                Task task = manager.fromString(line);
+
+                switch (task.getTaskType()) {
+                    case EPIC:
+                        manager.epics.put(task.getId(), (Epic) task);
+                        break;
+                    case SUBTASK:
+                        manager.subtasks.put(task.getId(), (Subtask) task);
+                        break;
+                    case TASK:
+                        manager.tasks.put(task.getId(), task);
+                        break;
                 }
             }
+
+            for (Subtask sub : manager.subtasks.values()) {
+                Epic epic = manager.epics.get(sub.getEpicId());
+                if (epic != null) {
+                    epic.addSubtask(sub.getId());
+                }
+            }
+
         } catch (IOException e) {
             throw new IOException("Ошибка загрузки из файла " + file, e);
         }
 
-        return lastFile;
+        return manager;
     }
+
 }

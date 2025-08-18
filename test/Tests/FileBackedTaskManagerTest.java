@@ -7,6 +7,7 @@ import ru.common.model.Subtask;
 import ru.common.model.Task;
 import ru.common.service.FileBackedTaskManager;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -49,6 +50,43 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
         } catch (IOException e) {
             fail("Ошибка чтения файла");
         }
+    }
+
+    @Test
+    void shouldHandleNullValuesWhenSavingAndLoading() throws IOException {
+        Task task = new Task("Task", "Description", Status.NEW, null, null);
+        Epic epic = new Epic("Epic", "Description");
+        Subtask subtask = new Subtask("Subtask", "Description", Status.NEW, epic.getId(), null, null);
+        FileBackedTaskManager manager = new FileBackedTaskManager(Path.of("test.csv"));
+        manager.addEpic(epic);
+        manager.addTask(task);
+        manager.addSubtask(subtask);
+        manager.save();
+        FileBackedTaskManager loaded = FileBackedTaskManager.loadFromFile(new File("test.csv"));
+        Task loadedTask = loaded.getTask(task.getId());
+        assertNull(loadedTask.getDuration());
+        assertNull(loadedTask.getStartTime());
+        Subtask loadedSubtask = loaded.getSubtask(subtask.getId());
+        assertNull(loadedSubtask.getDuration());
+        assertNull(loadedSubtask.getStartTime());
+    }
+
+    @Test
+    void shouldRestoreEpicSubtaskLinks() throws IOException {
+        Epic epic = new Epic("Epic", "Description");
+        Subtask subtask = new Subtask("Subtask", "Description", Status.NEW, epic.getId(),
+                Duration.ofMinutes(30), LocalDateTime.now());
+        FileBackedTaskManager manager = new FileBackedTaskManager(Path.of("test.csv"));
+        manager.addEpic(epic);
+        manager.addSubtask(subtask);
+        manager.save();
+        FileBackedTaskManager loaded = FileBackedTaskManager.loadFromFile(new File("test.csv"));
+        Epic loadedEpic = loaded.getEpic(epic.getId());
+        Subtask loadedSubtask = loaded.getSubtask(subtask.getId());
+        assertNotNull(loadedEpic);
+        assertNotNull(loadedSubtask);
+        assertEquals(1, loadedEpic.getSubtasks().size());
+        assertEquals(epic.getId(), loadedSubtask.getEpicId());
     }
 
     @Test
