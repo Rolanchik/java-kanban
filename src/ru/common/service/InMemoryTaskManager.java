@@ -101,7 +101,6 @@ public class InMemoryTaskManager implements TaskManager {
         return new ArrayList<>(subtasks.values());
     }
 
-
     @Override
     public boolean addTask(Task task) {
         if (task == null) return false;
@@ -116,7 +115,6 @@ public class InMemoryTaskManager implements TaskManager {
 
         return true;
     }
-
 
     @Override
     public boolean addEpic(Epic epic) {
