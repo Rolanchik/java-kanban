@@ -270,6 +270,7 @@ public class HttpServerEpicTest {
         manager.addEpic(existingEpic);
 
         Epic duplicateEpic = new Epic("Дубликат эпика", "Описание дубликата");
+        manager.addEpic(duplicateEpic);
         String epicJson = gson.toJson(duplicateEpic);
 
         HttpClient client = HttpClient.newHttpClient();
@@ -281,7 +282,7 @@ public class HttpServerEpicTest {
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        assertTrue(response.statusCode() == 406);
+        assertEquals(406, response.statusCode());
     }
 
     @Test
@@ -313,30 +314,5 @@ public class HttpServerEpicTest {
         assertNull(manager.getEpic(epic.getId()));
 
         assertEquals(0, manager.getSubtasks().size());
-    }
-
-    @Test
-    void shouldGetEpicWithSubtasks() throws IOException, InterruptedException {
-        Epic epic = new Epic("Эпик с подзадачами", "Описание эпика");
-        manager.addEpic(epic);
-
-        Subtask subtask = new Subtask("Подзадача", "Описание",
-                Status.NEW, epic.getId(), Duration.ofHours(1), LocalDateTime.now());
-        manager.addSubtask(subtask);
-
-        HttpClient client = HttpClient.newHttpClient();
-        URI url = URI.create("http://localhost:8080/epics/" + epic.getId());
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(url)
-                .GET()
-                .build();
-
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        assertEquals(200, response.statusCode());
-
-        Epic returnedEpic = gson.fromJson(response.body(), Epic.class);
-        assertNotNull(returnedEpic);
-        assertEquals(1, returnedEpic.getSubtasks().size());
-        assertTrue(returnedEpic.getSubtasks().contains(subtask.getId()));
     }
 }

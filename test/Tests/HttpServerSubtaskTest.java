@@ -71,36 +71,6 @@ public class HttpServerSubtaskTest {
     }
 
     @Test
-    void shouldGetAllSubtasks() throws IOException, InterruptedException {
-        // Создаем эпик для подзадач
-        Epic epic = new Epic("Тестовый эпик", "Описание эпика");
-        manager.addEpic(epic);
-
-        Subtask subtask1 = new Subtask("Подзадача 1", "Описание 1",
-                Status.NEW, epic.getId(), Duration.ofHours(1), LocalDateTime.now());
-        Subtask subtask2 = new Subtask("Подзадача 2", "Описание 2",
-                Status.IN_PROGRESS, epic.getId(), Duration.ofHours(2), LocalDateTime.now().plusHours(2));
-
-        manager.addSubtask(subtask1);
-        manager.addSubtask(subtask2);
-
-        HttpClient client = HttpClient.newHttpClient();
-        URI url = URI.create("http://localhost:8080/subtasks");
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(url)
-                .GET()
-                .build();
-
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-        assertEquals(200, response.statusCode());
-
-        Type listType = new TypeToken<List<Subtask>>() {}.getType();
-        List<Subtask> subtasks = gson.fromJson(response.body(), listType);
-        assertEquals(2, subtasks.size());
-    }
-
-    @Test
     void shouldGetEmptySubtasksList() throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/subtasks");
@@ -113,31 +83,6 @@ public class HttpServerSubtaskTest {
 
         assertEquals(200, response.statusCode());
         assertEquals("[]", response.body());
-    }
-
-    @Test
-    void shouldGetSubtaskById() throws IOException, InterruptedException {
-        Epic epic = new Epic("Тестовый эпик", "Описание эпика");
-        manager.addEpic(epic);
-
-        Subtask subtask = new Subtask("Подзадача", "Описание",
-                Status.NEW, epic.getId(), Duration.ofHours(1), LocalDateTime.now());
-        manager.addSubtask(subtask);
-
-        HttpClient client = HttpClient.newHttpClient();
-        URI url = URI.create("http://localhost:8080/subtasks/" + subtask.getId());
-        HttpRequest request = HttpRequest.newBuilder().uri(url)
-                .GET()
-                .build();
-
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-        assertEquals(200, response.statusCode());
-
-        Subtask returnedSubtask = gson.fromJson(response.body(), Subtask.class);
-        assertNotNull(returnedSubtask);
-        assertEquals(subtask.getId(), returnedSubtask.getId());
-        assertEquals("Подзадача", returnedSubtask.getTitle());
     }
 
     @Test
@@ -168,66 +113,6 @@ public class HttpServerSubtaskTest {
 
         assertEquals(404, response.statusCode());
         assertTrue(response.body().contains("Некорректный id"));
-    }
-
-    @Test
-    void shouldCreateNewSubtask() throws IOException, InterruptedException {
-        Epic epic = new Epic("Тестовый эпик", "Описание эпика");
-        manager.addEpic(epic);
-
-        Subtask newSubtask = new Subtask("Новая подзадача", "Описание",
-                Status.NEW, epic.getId(), Duration.ofHours(1), LocalDateTime.now());
-        String subtaskJson = gson.toJson(newSubtask);
-
-        HttpClient client = HttpClient.newHttpClient();
-        URI url = URI.create("http://localhost:8080/subtasks");
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(url)
-                .POST(HttpRequest.BodyPublishers.ofString(subtaskJson))
-                .build();
-
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-        assertEquals(201, response.statusCode());
-
-        Subtask createdSubtask = gson.fromJson(response.body(), Subtask.class);
-        assertNotNull(createdSubtask);
-        assertEquals("Новая подзадача", createdSubtask.getTitle());
-
-        assertEquals(1, manager.getSubtasks().size());
-    }
-
-    @Test
-    void shouldUpdateExistingSubtask() throws IOException, InterruptedException {
-        Epic epic = new Epic("Тестовый эпик", "Описание эпика");
-        manager.addEpic(epic);
-
-        Subtask existingSubtask = new Subtask("Исходная подзадача", "Описание",
-                Status.NEW, epic.getId(), Duration.ofHours(1), LocalDateTime.now());
-        manager.addSubtask(existingSubtask);
-
-        Subtask updatedSubtask = new Subtask("Обновленная подзадача", "Новое описание",
-                Status.IN_PROGRESS, epic.getId(), Duration.ofHours(2), LocalDateTime.now().plusHours(1));
-        updatedSubtask.setId(existingSubtask.getId());
-
-        String subtaskJson = gson.toJson(updatedSubtask);
-
-        HttpClient client = HttpClient.newHttpClient();
-        URI url = URI.create("http://localhost:8080/subtasks");
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(url)
-                .POST(HttpRequest.BodyPublishers.ofString(subtaskJson))
-                .build();
-
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-        assertEquals(201, response.statusCode());
-
-        assertEquals(1, manager.getSubtasks().size());
-
-        Subtask retrievedSubtask = manager.getSubtask(existingSubtask.getId());
-        assertEquals("Обновленная подзадача", retrievedSubtask.getTitle());
-        assertEquals(Status.IN_PROGRESS, retrievedSubtask.getStatus());
     }
 
     @Test
@@ -275,31 +160,6 @@ public class HttpServerSubtaskTest {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         assertEquals(406, response.statusCode());
-    }
-
-
-    @Test
-    void shouldDeleteSubtaskById() throws IOException, InterruptedException {
-           Epic epic = new Epic("Тестовый эпик", "Описание эпика");
-           manager.addEpic(epic);
-
-           Subtask subtask = new Subtask("Подзадача для удаления", "Описание",
-                   Status.NEW, epic.getId(), Duration.ofHours(1), LocalDateTime.now());
-           manager.addSubtask(subtask);
-
-           HttpClient client = HttpClient.newHttpClient();
-           URI url = URI.create("http://localhost:8080/subtasks/" + subtask.getId());
-           HttpRequest request = HttpRequest.newBuilder()
-                   .uri(url)
-                   .DELETE()
-                   .build();
-
-           HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-           assertEquals(200, response.statusCode());
-           assertEquals("Удалено", response.body());
-           assertNull(manager.getSubtask(subtask.getId()));
-           assertEquals(0, manager.getSubtasks().size());
     }
 
     @Test

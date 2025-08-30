@@ -93,15 +93,17 @@ public class EpicsHandler extends BaseHttpHandler {
         String body = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
         Epic epic = gson.fromJson(body, Epic.class);
 
-        boolean result = false;
-        if (manager.getEpic(epic.getId()) == null) {
-            result = manager.addEpic(epic);
+        if (epic.getId() != 0 && manager.getEpic(epic.getId()) != null) {
+            sendHasInteractions(exchange, "Эпик с таким ID уже существует", 406);
+            return;
         }
+
+        boolean result = manager.addEpic(epic);
 
         if (result) {
             sendText(exchange, gson.toJson(epic), 201);
         } else {
-            sendHasInteractions(exchange, "Задача пересекается с существующими", 406);
+            sendHasInteractions(exchange, "Ошибка при создании эпика", 406);
         }
     }
 
