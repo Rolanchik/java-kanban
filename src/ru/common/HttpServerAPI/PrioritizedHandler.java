@@ -26,7 +26,7 @@ public class PrioritizedHandler extends BaseHttpHandler {
         String method = exchange.getRequestMethod();
         String path = exchange.getRequestURI().getPath();
 
-        if (HttpMethod.GET.equals(method)) {
+        if (GET.equals(method)) {
             handleGetPrioritized(exchange, path);
             return;
         }

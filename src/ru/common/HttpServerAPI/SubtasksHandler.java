@@ -27,17 +27,17 @@ public class SubtasksHandler extends BaseHttpHandler {
         String method = exchange.getRequestMethod();
         String path = exchange.getRequestURI().getPath();
 
-        if (HttpMethod.GET.equals(method)) {
+        if (GET.equals(method)) {
             handleGetSubtask(exchange, path);
             return;
         }
 
-        if (HttpMethod.POST.equals(method)) {
+        if (POST.equals(method)) {
             handlePostSubtask(exchange);
             return;
         }
 
-        if (HttpMethod.DELETE.equals(method)) {
+        if (DELETE.equals(method)) {
             handleDeleteSubtask(exchange, path);
             return;
         }

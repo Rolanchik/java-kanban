@@ -28,17 +28,17 @@ public class TasksHandler extends BaseHttpHandler {
         String method = exchange.getRequestMethod();
         String path = exchange.getRequestURI().getPath();
 
-        if (HttpMethod.GET.equals(method)) {
+        if (GET.equals(method)) {
             handleGetTask(exchange, path);
             return;
         }
 
-        if (HttpMethod.POST.equals(method)) {
+        if (POST.equals(method)) {
             handlePostTask(exchange);
             return;
         }
 
-        if (HttpMethod.DELETE.equals(method)) {
+        if (DELETE.equals(method)) {
             handleDeleteTask(exchange, path);
             return;
         }
