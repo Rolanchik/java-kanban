@@ -28,17 +28,17 @@ public class TasksHandler extends BaseHttpHandler {
         String method = exchange.getRequestMethod();
         String path = exchange.getRequestURI().getPath();
 
-        if ("GET".equals(method)) {
+        if (HttpMethod.GET.equals(method)) {
             handleGetTask(exchange, path);
             return;
         }
 
-        if ("POST".equals(method)) {
+        if (HttpMethod.POST.equals(method)) {
             handlePostTask(exchange);
             return;
         }
 
-        if ("DELETE".equals(method)) {
+        if (HttpMethod.DELETE.equals(method)) {
             handleDeleteTask(exchange, path);
             return;
         }
@@ -47,13 +47,13 @@ public class TasksHandler extends BaseHttpHandler {
     private void handleGetTask(HttpExchange exchange, String path) throws IOException {
         String[] parts = path.split("/");
 
-        if (parts.length == 2 && parts[1].equals("tasks")) {
+        if (parts.length == 2 && parts[1].equals(TASKS_PATH)) {
             String responce = gson.toJson(manager.getTasks());
             sendText(exchange, responce, 200);
             return;
         }
 
-        if (parts.length == 3 && parts[1].equals("tasks")) {
+        if (parts.length == 3 && parts[1].equals(TASKS_PATH)) {
             try {
                 int id = Integer.parseInt(parts[2]);
                 Task task = manager.getTask(id);
@@ -100,7 +100,7 @@ public class TasksHandler extends BaseHttpHandler {
             return;
         }
 
-        if (parts.length == 3 && parts[1].equals("tasks")) {
+        if (parts.length == 3 && parts[1].equals(TASKS_PATH)) {
             try {
                 int id = Integer.parseInt(parts[2]);
                 boolean removed = manager.deleteTaskById(id);

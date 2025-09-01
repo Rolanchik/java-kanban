@@ -26,7 +26,7 @@ public class HistoryHandler extends BaseHttpHandler {
         String method = exchange.getRequestMethod();
         String path = exchange.getRequestURI().getPath();
 
-        if ("GET".equals(method)) {
+        if (HttpMethod.GET.equals(method)) {
             handleGetHistory(exchange, path);
             return;
         }
@@ -35,7 +35,7 @@ public class HistoryHandler extends BaseHttpHandler {
     private void handleGetHistory(HttpExchange exchange, String path) throws IOException {
         String[] parts = path.split("/");
 
-        if (parts.length == 2 && parts[1].equals("history")) {
+        if (parts.length == 2 && parts[1].equals(HISTORY_PATH)) {
             String responce = gson.toJson(manager.getHistoryList());
             sendText(exchange, responce, 200);
             return;

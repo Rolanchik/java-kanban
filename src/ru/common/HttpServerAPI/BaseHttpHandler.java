@@ -7,6 +7,13 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
 public abstract class BaseHttpHandler implements HttpHandler {
+
+    protected static final String TASKS_PATH = "/tasks";
+    protected static final String EPICS_PATH = "/epics";
+    protected static final String SUBTASKS_PATH = "/subtasks";
+    protected static final String HISTORY_PATH = "/history";
+    protected static final String PRIORITIZED_PATH = "/prioritized";
+
     protected void sendText(HttpExchange exchange, String text, int code) throws IOException {
         byte[] resp = text.getBytes(StandardCharsets.UTF_8);
         exchange.getResponseHeaders().add("Content-Type", "application/json;charset=utf-8");

@@ -26,7 +26,7 @@ public class PrioritizedHandler extends BaseHttpHandler {
         String method = exchange.getRequestMethod();
         String path = exchange.getRequestURI().getPath();
 
-        if ("GET".equals(method)) {
+        if (HttpMethod.GET.equals(method)) {
             handleGetPrioritized(exchange, path);
             return;
         }
@@ -35,7 +35,7 @@ public class PrioritizedHandler extends BaseHttpHandler {
     private void handleGetPrioritized(HttpExchange exchange, String path) throws IOException {
         String[] parts = path.split("/");
 
-        if (parts.length == 2 && parts[1].equals("prioritized")) {
+        if (parts.length == 2 && parts[1].equals(PRIORITIZED_PATH)) {
             String responce = gson.toJson(manager.getPrioritizedTasks());
             sendText(exchange, responce, 200);
             return;

@@ -27,17 +27,17 @@ public class SubtasksHandler extends BaseHttpHandler {
         String method = exchange.getRequestMethod();
         String path = exchange.getRequestURI().getPath();
 
-        if ("GET".equals(method)) {
+        if (HttpMethod.GET.equals(method)) {
             handleGetSubtask(exchange, path);
             return;
         }
 
-        if ("POST".equals(method)) {
+        if (HttpMethod.POST.equals(method)) {
             handlePostSubtask(exchange);
             return;
         }
 
-        if ("DELETE".equals(method)) {
+        if (HttpMethod.DELETE.equals(method)) {
             handleDeleteSubtask(exchange, path);
             return;
         }
@@ -46,13 +46,13 @@ public class SubtasksHandler extends BaseHttpHandler {
     private void handleGetSubtask(HttpExchange exchange, String path) throws IOException {
         String[] parts = path.split("/");
 
-        if (parts.length == 2 && parts[1].equals("subtasks")) {
+        if (parts.length == 2 && parts[1].equals(SUBTASKS_PATH)) {
             String responce = gson.toJson(manager.getSubtasks());
             sendText(exchange, responce, 200);
             return;
         }
 
-        if (parts.length == 3 && parts[1].equals("subtasks")) {
+        if (parts.length == 3 && parts[1].equals(SUBTASKS_PATH)) {
             try {
                 int id = Integer.parseInt(parts[2]);
                 Subtask subtask = manager.getSubtask(id);
@@ -95,7 +95,7 @@ public class SubtasksHandler extends BaseHttpHandler {
             System.out.println("Parts: " + java.util.Arrays.toString(parts));
             System.out.println("Parts length: " + parts.length);
 
-            if (parts.length != 3 || !parts[1].equals("subtasks")) {
+            if (parts.length != 3 || !parts[1].equals(SUBTASKS_PATH)) {
                 System.out.println("Invalid path structure");
                 sendNotFind(exchange, "Некорректный путь. Ожидается /subtasks/{id}", 400);
                 return;

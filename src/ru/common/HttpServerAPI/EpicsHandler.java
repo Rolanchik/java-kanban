@@ -29,17 +29,17 @@ public class EpicsHandler extends BaseHttpHandler {
         String method = exchange.getRequestMethod();
         String path = exchange.getRequestURI().getPath();
 
-        if ("GET".equals(method)) {
+        if (HttpMethod.GET.equals(method)) {
             handleGetEpic(exchange, path);
             return;
         }
 
-        if ("POST".equals(method)) {
+        if (HttpMethod.POST.equals(method)) {
             handlePostEpic(exchange);
             return;
         }
 
-        if ("DELETE".equals(method)) {
+        if (HttpMethod.DELETE.equals(method)) {
             handleDeleteEpic(exchange, path);
             return;
         }
@@ -48,13 +48,13 @@ public class EpicsHandler extends BaseHttpHandler {
     private void handleGetEpic(HttpExchange exchange, String path) throws IOException {
         String[] parts = path.split("/");
 
-        if (parts.length == 2 && parts[1].equals("epics")) {
+        if (parts.length == 2 && parts[1].equals(EPICS_PATH)) {
             String responce = gson.toJson(manager.getEpics());
             sendText(exchange, responce, 200);
             return;
         }
 
-        if (parts.length == 3 && parts[1].equals("epics")) {
+        if (parts.length == 3 && parts[1].equals(EPICS_PATH)) {
             try {
                 int id = Integer.parseInt(parts[2]);
                 Epic epic = manager.getEpic(id);
@@ -69,7 +69,7 @@ public class EpicsHandler extends BaseHttpHandler {
             return;
         }
 
-        if (parts.length == 4 && parts[1].equals("epics") && parts[3].equals("subtasks")) {
+        if (parts.length == 4 && parts[1].equals(EPICS_PATH) && parts[3].equals(SUBTASKS_PATH)) {
             try {
                 int id = Integer.parseInt(parts[2]);
 
@@ -115,7 +115,7 @@ public class EpicsHandler extends BaseHttpHandler {
             return;
         }
 
-        if (parts.length == 3 && parts[1].equals("epics")) {
+        if (parts.length == 3 && parts[1].equals(EPICS_PATH)) {
             try {
                 int id = Integer.parseInt(parts[2]);
                 boolean removed = manager.deleteEpicById(id);

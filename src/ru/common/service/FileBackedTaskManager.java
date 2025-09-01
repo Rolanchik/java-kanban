@@ -96,14 +96,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public boolean updateEpic(Epic newEpic) {
-        boolean added = super.updateTask(newEpic);
+        boolean added = super.updateEpic(newEpic);
         save();
         return added;
     }
 
     @Override
     public boolean updateSubtask(Subtask newSubtask) {
-        boolean added = super.updateTask(newSubtask);
+        boolean added = super.updateSubtask(newSubtask);
         save();
         return added;
     }
